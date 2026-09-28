@@ -1,0 +1,32 @@
+name: Build
+on: [push]
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.1'
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euxo pipefail
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            make release
+          else
+            make release-snapshot
+          fi
+      - name: Archive
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifacts
+          if-no-files-found: error
+          path: |
+            dist/
+            !dist/*/*

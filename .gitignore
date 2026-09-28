@@ -1,0 +1,6 @@
+dist/
+dumpargs
+dumpargs.exe
+tmp*
+*.log
+*.syso
